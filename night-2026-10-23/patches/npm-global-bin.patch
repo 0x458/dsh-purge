@@ -1,0 +1,29 @@
+--- a/dsh
++++ b/dsh
+@@ -1,4 +1,26 @@
+ #!/usr/bin/env node
++// dsh-purge shim begin
++if (!process.env.DSH_HOME) {
++  try {
++    const _dshShimFs =
++      typeof process.getBuiltinModule === "function"
++        ? process.getBuiltinModule("node:fs")
++        : typeof require === "function"
++          ? require("node:fs")
++          : null;
++    if (_dshShimFs) {
++      const _dshShimArgv = process.argv[1] || "";
++      const _dshShimDir = _dshShimArgv.replace(/\\/g, "/").replace(/\/[^/]*$/, "");
++      for (const _dshShimRel of ["", "/..", "/../.."]) {
++        const _dshShimCand = _dshShimDir + _dshShimRel + "/.dsh";
++        try {
++          if (_dshShimFs.statSync(_dshShimCand).isDirectory()) { process.env.DSH_HOME = _dshShimCand; break; }
++        } catch {}
++      }
++    }
++  } catch {}
++}
++// dsh-purge shim end
+ import { StartupError, getDshRuntimeVersion, loadLayeredEnv } from "@deepseek-ai/dsh-app-boot";
+ import { resolveDshHome } from "@deepseek-ai/dsh-home-paths";
+ import { Command, CommanderError, InvalidArgumentError } from "commander";

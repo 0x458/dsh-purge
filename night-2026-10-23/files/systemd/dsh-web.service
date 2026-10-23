@@ -1,0 +1,14 @@
+[Unit]
+Description=DeepSeek Harness web
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/g0x9458i
+ExecStartPre=/bin/chmod +x /home/g0x9458i/.npm-global/bin/dsh
+ExecStart=/home/g0x9458i/.npm-global/bin/dsh web --no-open --host 100.126.242.114 --trusted-host 100.126.242.114
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
